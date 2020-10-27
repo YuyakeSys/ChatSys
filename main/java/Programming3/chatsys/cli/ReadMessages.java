@@ -37,7 +37,7 @@ public class ReadMessages {
         RandomAccessFile fileRead = null;
         try {
             fileRead = new RandomAccessFile(file, "r");
-            //读取文件长度
+            //length
             long length = fileRead.length();
             if (length == 0L) {
                 return result;

@@ -1,15 +1,22 @@
 package Programming3.chatsys.data;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class User {
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
     private String userName;
     private String fullName;
     private String password;
     private int lastReadId;
+    //The username could only contain letters, numbers and _
+    public static boolean userNameIsValid(String userName) {
+        return USERNAME_PATTERN.matcher(userName).find();}
     @Override
     public String toString() {
         return "User{" +
@@ -19,6 +26,21 @@ public class User {
                 ", lastReadId=" + lastReadId +
                 '}';
     }
+    //give value to the object
+    public  void init(String userName, String fullName, String password, int lastReadId){
+        if (!userNameIsValid(userName)) {
+            throw new IllegalArgumentException("Invalid userName");
+        }
+        this.userName = userName;
+        this.fullName = fullName;
+        this.password = password;
+        this.lastReadId = lastReadId;
+    }
+
+    public User(String userName, String fullName, String password) {
+        this.init(userName, fullName, password, 0);}
+    public User() {
+        this.init("NULL","NULL", "NULL", 0);}
 
     @Override
     public boolean equals(Object o) {
@@ -40,24 +62,12 @@ public class User {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public String getFullName() {
         return fullName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public int getLastReadId() {
@@ -69,13 +79,29 @@ public class User {
     }
 
     public String format(){
-        return userName + "\t" + fullName + "\t" +password+"\t"+lastReadId+"\r\n";
+        return this.userName + "\t" + this.fullName + "\t" + this.password+"\t"+this.lastReadId;
     }
-    public void parse(String formatted){
+
+    public void parse(String formatted) {
         String data[] = formatted.split("\t");
-        this.userName = data[0];
-        this.fullName = data[1];
-        this.password = data[2];
-        this.lastReadId = Integer.parseInt(data[3]);
+        if (data.length < 4){
+            throw new IllegalArgumentException("Too short for parse");
+        }else{
+            this.init(data[0],data[1],data[2],Integer.parseInt(data[3]));
+        }
     }
+
+    public void save(String filename) {
+        this.save(new File(filename));
+    }
+
+    public void save(File file) {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(file, true))) {
+            out.write(this.format() + "\n");
+            out.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(file + " cannot be opened", e);
+        }
+    }
+
 }

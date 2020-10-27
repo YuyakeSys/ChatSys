@@ -16,7 +16,6 @@ public class SendMessages {
         String str = scan.next();
         File file = new File(filename);
         int last_id = -1;
-
         if (!file.exists() || file.length() == 0) {
             last_id = 0;
         } else {

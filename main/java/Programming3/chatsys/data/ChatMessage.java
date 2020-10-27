@@ -2,13 +2,14 @@ package Programming3.chatsys.data;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.Objects;
-
+// The set messages method are learnt from the cod examples, which is the same in the User class.
 
 public class ChatMessage extends TextDatabaseItem{
     private int id;
     private String userName;
     private Timestamp timestamp;
     private String message;
+    User user1 = new User();
 
     public ChatMessage(int id, String userName, Timestamp timestamp, String message) {
         this.init(id, userName, timestamp, message);
@@ -31,6 +32,9 @@ public class ChatMessage extends TextDatabaseItem{
     private void init(int id, String userName, Timestamp timestamp, String message) {
         if (message.indexOf('\n') >= 0) {
             throw new IllegalArgumentException("message contains a line feed");
+        }
+        if (!user1.userNameIsValid(userName)) {
+            throw new IllegalArgumentException("Invalid userName");
         }
         this.id = id;
         this.userName = userName;

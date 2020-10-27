@@ -15,18 +15,18 @@ public class ChatMessageTest {
     ChatMessage cm;
     @Before
     public void setUp(){
-        cm = new ChatMessage(1,"ACE",123123123,"Test");//
+        cm = new ChatMessage(1,"John",123123123,"Test");//
 
     }
     @Test
     public void format() {
-        assertEquals(1+ "\t" +"ACE" + "\t" +123123123+"\t"+"Test",cm.format());
+        assertEquals(1+ "\t" +"John" + "\t" +123123123+"\t"+"Test",cm.format());
     }
 
     @Test
     public void parse() {
         cm.parse(cm.format());
-        assertEquals("ACE",cm.getUserName());
+        assertEquals("John",cm.getUserName());
         assertEquals(1,cm.getId());
     }
 
@@ -37,11 +37,12 @@ public class ChatMessageTest {
         String st = in.readLine();//connect the char to string
         System.out.print(st);
         in.close();
-        assertEquals(1+ "\t" +"ACE" + "\t" +123123123+"\t"+"Test",st);
+        assertEquals(1+ "\t" +"John" + "\t" +123123123+"\t"+"Test",st);
     }
     @AfterClass
     public static void clean(){
         File del_file = new File("messages_test.txt");
         del_file.delete();
     }
+
 }
