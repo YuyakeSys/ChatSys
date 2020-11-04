@@ -14,9 +14,9 @@ public class UserTest {
     @Before
     public void setUp(){
         user1 = new User("Amy","Alice","123");//
-        user1.save("User_test.txt");
+        user1.save("user_test.txt");
         user2 = new User("Black","John","4567");//
-        user2.save("User_test.txt");
+        user2.save("user_test.txt");
     }
     @Test
     public void format() {
@@ -38,12 +38,12 @@ public class UserTest {
         assertEquals("Amy"+ "\t" +"Alice" + "\t" +"123"+"\t"+0,st);
         }
 
-
-    /*@AfterClass
+    /**
+    @AfterClass
     public static void clean(){
         File del_file = new File("User_test.txt");
         del_file.delete();
     }
-    */
+**/
 }
 

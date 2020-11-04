@@ -1,6 +1,5 @@
 package Programming3.chatsys.cli;
-import Programming3.chatsys.data.ChatMessage;
-import Programming3.chatsys.data.Database;
+import Programming3.chatsys.data.TextDatabase;
 import Programming3.chatsys.data.User;
 
 import java.io.*;
@@ -12,10 +11,10 @@ import java.util.Scanner;
 
 public class RegisterUser {
     List<String> ck = new ArrayList<>();
-    Database db = new Database();
+    TextDatabase db = new TextDatabase("messages_test.txt","user_test.txt");
 
     public static void main(String[] args) throws IOException {
-        Database Db = new Database();
+        TextDatabase Db = new TextDatabase("messages_test.txt","user_test.txt");
         RegisterUser re = new RegisterUser();
         Scanner scan = new Scanner(System.in);
         System.out.println("--------Register------");
@@ -25,11 +24,11 @@ public class RegisterUser {
         String Password_1 = scan.next();
         re.check(UserName_1);
         User new_user = new User(UserName_1, FullName_1, Password_1);
-        new_user.save("User_test.txt");
+        new_user.save("user_test.txt");
     }
 
     public void check(String str) throws IOException {
-        Database db = new Database();
+        TextDatabase db = new TextDatabase("messages_test.txt","user_test.txt");
         Map<String, User> m = db.readUsers();
         if (m.containsKey(str)) {
             System.out.println("Exist userName");

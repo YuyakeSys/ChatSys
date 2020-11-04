@@ -39,10 +39,10 @@ public class ChatMessageTest {
         in.close();
         assertEquals(1+ "\t" +"John" + "\t" +123123123+"\t"+"Test",st);
     }
-    @AfterClass
+    /**@AfterClass
     public static void clean(){
         File del_file = new File("messages_test.txt");
         del_file.delete();
-    }
+    }**/
 
 }

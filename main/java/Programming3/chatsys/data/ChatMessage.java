@@ -22,12 +22,8 @@ public class ChatMessage extends TextDatabaseItem{
         super();
         this.init(id, userName, System.currentTimeMillis(), message);
     }
-    public ChatMessage(){
-        this.id=-1;
-        this.userName="null";
-        this.message="null";
-        this.timestamp=null;
-    }
+
+    public ChatMessage(){}
 
     private void init(int id, String userName, Timestamp timestamp, String message) {
         if (message.indexOf('\n') >= 0) {
@@ -108,6 +104,7 @@ public class ChatMessage extends TextDatabaseItem{
         try (BufferedWriter out = new BufferedWriter(new FileWriter(file, true))) {
             out.write(this.format() + "\n");
             out.flush();
+            out.close();
         } catch (IOException e) {
             throw new RuntimeException(file + " cannot be opened", e);
         }

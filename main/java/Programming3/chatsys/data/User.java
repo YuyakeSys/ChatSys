@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class User {
+public class User extends TextDatabaseItem {
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
     private String userName;
     private String fullName;
@@ -93,15 +93,6 @@ public class User {
 
     public void save(String filename) {
         this.save(new File(filename));
-    }
-
-    public void save(File file) {
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(file, true))) {
-            out.write(this.format() + "\n");
-            out.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(file + " cannot be opened", e);
-        }
     }
 
 }
