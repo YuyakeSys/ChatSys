@@ -38,12 +38,11 @@ public class UserTest {
         assertEquals("Amy"+ "\t" +"Alice" + "\t" +"123"+"\t"+0,st);
         }
 
-    /**
+
     @AfterClass
     public static void clean(){
         File del_file = new File("User_test.txt");
         del_file.delete();
     }
-**/
 }
 

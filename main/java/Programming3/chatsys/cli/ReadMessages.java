@@ -4,7 +4,12 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
-
+/**
+ *Chester Meng
+ * 2020.11.3
+ * Java 1.8
+ * @return
+ */
 
 public class ReadMessages {
     public static void main(String[] args) throws IOException, FileNotFoundException {
@@ -14,19 +19,25 @@ public class ReadMessages {
         if (lines == 0) {
             try {
                 Scanner sc = new Scanner(new File("messages_test.txt"));
-                //按行读取test.txt文件内容
+                //read messages
                 while (sc.hasNextLine()) {
                     System.out.println(sc.nextLine());
 
                 }
             } catch (FileNotFoundException e) {
-
+                System.out.println("No file exists");
             }
         } else {
             readLastNLine(new File("messages_test.txt"), lines);
         }
     }
 
+    /**
+     * Return the message of the last line
+     * @param file
+     * @param numRead
+     * @return
+     */
     public static List<String> readLastNLine(File file, long numRead) {
         List<String> result = new ArrayList<String>();
         long count = 0;

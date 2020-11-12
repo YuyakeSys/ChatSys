@@ -1,6 +1,7 @@
 package Programming3.chatsys.threads;
 
 import Programming3.chatsys.data.ChatMessage;
+import Programming3.chatsys.data.ReadWriteTextDatabase;
 import Programming3.chatsys.data.TextDatabase;
 
 import java.util.HashSet;
@@ -10,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ThreadServer extends MessageQueue implements Runnable{
     private ThreadServer server;
     MessageQueue mq = new MessageQueue();
-    TextDatabase Database = new TextDatabase("messages_test.txt","user_test.txt");
+    TextDatabase Database = new ReadWriteTextDatabase("messages_test.txt","user_test.txt");
     MessageQueue messageQueue = new MessageQueue();
     private ReentrantLock lock = new ReentrantLock();
     private static String name;
@@ -27,6 +28,9 @@ public class ThreadServer extends MessageQueue implements Runnable{
         this.Database = textDatabase;
     }
 
+    /**
+     *  The run method
+     */
     @Override
     public void run(){
         System.out.println("Server starts");
@@ -37,7 +41,7 @@ public class ThreadServer extends MessageQueue implements Runnable{
                 cmg = mq.getMessage(100);
                 if(cmg!=null) {
                     System.out.println(cmg.format());
-                    Database.addMessage(cmg);
+                    Database.addMessage(cmg.getMessage(), cmg.getUserName());
                     cmg = new ChatMessage();
                     lock.unlock();
                 }

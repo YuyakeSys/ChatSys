@@ -3,7 +3,12 @@ import java.io.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 // The set messages method are learnt from the cod examples, which is the same in the User class.
-
+/**
+ *Chester Meng
+ * 2020.11.3
+ * Java 1.8
+ * @return
+ */
 public class ChatMessage extends TextDatabaseItem{
     private int id;
     private String userName;
@@ -12,6 +17,7 @@ public class ChatMessage extends TextDatabaseItem{
     User user1 = new User();
 
     public ChatMessage(int id, String userName, Timestamp timestamp, String message) {
+        super();
         this.init(id, userName, timestamp, message);
     }
 
@@ -19,10 +25,8 @@ public class ChatMessage extends TextDatabaseItem{
         this.init(id, userName, new Timestamp(timestamp), message);
     }
     public ChatMessage(int id, String userName, String message) {
-        super();
         this.init(id, userName, System.currentTimeMillis(), message);
     }
-
     public ChatMessage(){}
 
     private void init(int id, String userName, Timestamp timestamp, String message) {
@@ -88,6 +92,10 @@ public class ChatMessage extends TextDatabaseItem{
         return this.id + "\t" + this.userName + "\t" +this.timestamp.getTime()+"\t"+this.message;
     }
 
+    /**
+     * parse the formatted
+     * @param formatted
+     */
     public void parse(String formatted){
         String data[] = formatted.split("\t",4);
         if (data.length < 4){

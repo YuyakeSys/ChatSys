@@ -16,7 +16,7 @@ public class ChatMessageTest {
     @Before
     public void setUp(){
         cm = new ChatMessage(1,"John",123123123,"Test");//
-
+        cm.save("messages_test.txt");
     }
     @Test
     public void format() {
@@ -32,17 +32,16 @@ public class ChatMessageTest {
 
      @Test
     public void save() throws IOException {
-        cm.save("messages_test.txt");
         BufferedReader in = new BufferedReader(new FileReader("messages_test.txt"));
         String st = in.readLine();//connect the char to string
         System.out.print(st);
         in.close();
         assertEquals(1+ "\t" +"John" + "\t" +123123123+"\t"+"Test",st);
     }
-    /**@AfterClass
+    @AfterClass
     public static void clean(){
         File del_file = new File("messages_test.txt");
         del_file.delete();
-    }**/
+    }
 
 }

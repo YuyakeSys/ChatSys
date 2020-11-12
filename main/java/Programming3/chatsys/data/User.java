@@ -7,7 +7,12 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.regex.Pattern;
-
+/**
+ * @author Chester Meng
+ * 2020.11.3
+ * Java 1.8
+ * @return
+ */
 public class User extends TextDatabaseItem {
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
     private String userName;
@@ -37,6 +42,12 @@ public class User extends TextDatabaseItem {
         this.lastReadId = lastReadId;
     }
 
+    /**
+     * Constructor of the user
+     * @param userName
+     * @param fullName
+     * @param password
+     */
     public User(String userName, String fullName, String password) {
         this.init(userName, fullName, password, 0);}
     public User() {
@@ -82,6 +93,10 @@ public class User extends TextDatabaseItem {
         return this.userName + "\t" + this.fullName + "\t" + this.password+"\t"+this.lastReadId;
     }
 
+    /**
+     * parse a formatted string
+     * @param formatted
+     */
     public void parse(String formatted) {
         String data[] = formatted.split("\t");
         if (data.length < 4){
@@ -90,7 +105,6 @@ public class User extends TextDatabaseItem {
             this.init(data[0],data[1],data[2],Integer.parseInt(data[3]));
         }
     }
-
     public void save(String filename) {
         this.save(new File(filename));
     }

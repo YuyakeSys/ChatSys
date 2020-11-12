@@ -1,28 +1,27 @@
 package Programming3.chatsys.tcp;
 
 
-import Programming3.chatsys.data.ChatMessage;
-import Programming3.chatsys.data.Database;
-import Programming3.chatsys.data.TextDatabase;
+import Programming3.chatsys.data.*;
 
 import java.io.*;
 import java.net.Socket;
 
 
 import Programming3.chatsys.data.ChatMessage;
-import Programming3.chatsys.data.TextDatabase;
-import Programming3.chatsys.data.User;
 
-import java.io.*;
-import java.net.Socket;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * @author Chester Meng
+ * 2020.11.3
+ * Java 1.8
+ * @return
+ */
 public class TCPChatServerSession implements Runnable{
     private TCPChatServer server;
     BufferedWriter writer;
     BufferedReader reader;
-    private TextDatabase database = new TextDatabase("messages_test.txt","user_test.txt") ;
+    private Database database = new ReadWriteTextDatabase("messages_test.txt","user_test.txt") ;
     private Socket socket;
     private int i = 0;
 
@@ -50,11 +49,11 @@ public class TCPChatServerSession implements Runnable{
     public  TCPChatServerSession(){
     }
 
-    public TCPChatServerSession(TextDatabase database, Socket socket, TCPChatServer server){
+    public TCPChatServerSession(Database database, Socket socket, TCPChatServer server){
         this.init(database, socket, server);
     }
 
-    public void init(TextDatabase database, Socket socket, TCPChatServer server){
+    public void init(Database database, Socket socket, TCPChatServer server) {
         this.database = database;
         this.socket = socket;
         this.server = server;
@@ -63,6 +62,7 @@ public class TCPChatServerSession implements Runnable{
     @Override
     public void run() {
         try {
+            this.persistence();
             this.initInputOutOPut();
             System.out.println("Responding to:" + socket);
             for (String line = this.reader.readLine(); line!=null; line = this.reader.readLine()) {
@@ -80,6 +80,10 @@ public class TCPChatServerSession implements Runnable{
         }
     }
 
+    /**
+     * Split the messages input with " "
+     * @param line The message send by the client in line
+     */
     public void handleMessage(String line) {
         String[] split = line.split(" ");
         if(split.length > 1){
@@ -100,7 +104,7 @@ public class TCPChatServerSession implements Runnable{
                     break;
                 }
                 case "REGISTER":{
-                    this.handleRegister(split);
+                    this.handleRegister(line);
                     break;
                 }
                 case "LOGIN":{
@@ -108,7 +112,7 @@ public class TCPChatServerSession implements Runnable{
                     break;
                 }
                 case "POST":{
-                    this.handlePostMessage(line);
+                    this.handlePostMessage(split);
                     break;
                 }
                 case "OK":{
@@ -121,18 +125,27 @@ public class TCPChatServerSession implements Runnable{
 
     }
 
-    private void handlePostMessage(String message){
+    /**
+     * Post function
+     * @param message message sent by the client
+     */
+    private void handlePostMessage(String[] message){
         if(this.getStatus().equals("Authenticated")) {
+            database.addMessage(message[1], this.userName);
             this.sendOk();
         }else {
             this.sendError( "Unauthenticated");
         }
     }
 
-
+    /**
+     * Send message to the client
+     * @param messages
+     * @throws IOException
+     */
     private void sendMessages(List<ChatMessage> messages) throws IOException{
-        System.out.println("Sending  " + messages.size() + "to" + socket);
-        this.writer.write("Message  " + messages.size() + "\r\n");
+        System.out.println("Sending " + messages.size() + "to" + socket);
+        this.writer.write("Message " + messages.size() + "\r\n");
         for (ChatMessage message: messages) {
             this.sendMessage(message);
         }
@@ -152,12 +165,17 @@ public class TCPChatServerSession implements Runnable{
 
     }
 
-    private void handleRegister(String[] split) {
+    /**
+     * Regist user with
+     * Usename Fullname Password
+     * @param message
+     */
+    private void handleRegister(String message) {
         try {
+            String[] split = message.split(" ");
             map = database.readUsers();
-            User rgstUsr = new User(split[1], split[2], split[3]);
-            if (!map.containsKey(split[1])) {
-                rgstUsr.save("user_test.txt");
+            User rgstUsr = new User(split[1], message.substring(message.indexOf(" "),message.lastIndexOf(" ")), split[split.length-1]);
+            if (database.register(rgstUsr)) {
                 this.sendOk();
             } else {
                 writer.write("ERROR username already taken\r\n");
@@ -168,16 +186,24 @@ public class TCPChatServerSession implements Runnable{
         }
     }
 
+    /**
+     * a method can be used to send messages to the
+     * @param message
+     * @throws IOException
+     */
     private void sendMessage(ChatMessage message) throws IOException {
         this.writer.write("Message: " + message + "\r\n");
     }
 
+    /**
+     * Method used for login
+     * @param split
+     */
     private void handleLogin(String[] split)  {
         if (split.length == 3) {
             try {
-                String username = split[1];
-                this.userName = username;
-                if (split[2].equals(database.readUsers().get(username).getPassword())) {
+                this.userName = split[1];
+                if (database.authenticate(split[1],split[2])) {
                     this.status = "Authenticated";
                     this.sendOk();
                 } else {
@@ -191,8 +217,10 @@ public class TCPChatServerSession implements Runnable{
         }
     }
 
-
-
+    /**
+     * get recent messagse
+     * @param message
+     */
     private void handleGETRecentMessage(String[] message) {
         if(message.length > 1 ) {
             try {
@@ -206,8 +234,10 @@ public class TCPChatServerSession implements Runnable{
         }
     }
 
-
-
+    /**
+     * Initialize the stream
+     * @throws IOException
+     */
     private void initInputOutOPut() throws IOException {
         this.writer = new BufferedWriter(
                 new OutputStreamWriter(this.socket.getOutputStream(), "UTF-8")
@@ -217,6 +247,9 @@ public class TCPChatServerSession implements Runnable{
         );
     }
 
+    /**
+     * Send Ok message
+     */
     private void sendOk() {
         try {
             this.writer.write("OK\r\n");
@@ -226,6 +259,10 @@ public class TCPChatServerSession implements Runnable{
         }
     }
 
+    /**
+     * Send error message
+     * @param message
+     */
     private void sendError(String message) {
         try {
             this.writer.write("Error: " + message + "\r\n");
@@ -233,6 +270,26 @@ public class TCPChatServerSession implements Runnable{
 
         }catch (IOException e){
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Check whether the database exists
+     */
+    private void  persistence(){
+        File user = new File("user_test.txt");
+        File message = new File("messages_test.txt");
+        if(!user.exists()){
+            try{
+                user.createNewFile();
+                message.createNewFile();
+                User user1 = new User("user1","User1","mypassword");
+                User user2 = new User("user_2","Full Name","PassWord");
+                user1.save("user_test.txt");
+                user2.save("user_test.txt");
+            }catch(IOException e){
+                e.printStackTrace();
+            }
         }
     }
 

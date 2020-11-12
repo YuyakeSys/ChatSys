@@ -3,7 +3,7 @@ package Programming3.chatsys.threads;
 import Programming3.chatsys.data.ChatMessage;
 
 public class ThreadClient extends MessageQueue implements Runnable {
-    private static String name;
+    private String name;
     final private ThreadServer server;
 
     public ThreadClient (ThreadServer server, String name){
@@ -20,7 +20,7 @@ public class ThreadClient extends MessageQueue implements Runnable {
 
     @Override
     public void run(){
-        System.out.println("Client starts"+this.getName());
+        System.out.println("Client starts "+this.getName());
         while(true){
             ThreadClient client = new ThreadClient(server,name);
             server.register(client);

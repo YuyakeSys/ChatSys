@@ -1,13 +1,18 @@
 package Programming3.chatsys.cli;
 
 import Programming3.chatsys.data.ChatMessage;
-import Programming3.chatsys.data.Database;
+import Programming3.chatsys.data.TextDatabase;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
-
+/**
+ *Chester Meng
+ * 2020.11.3
+ * Java 1.8
+ * @return
+ */
 public class SendMessages {
     public static void main(String[] args) throws IOException {
         String filename = "messages_test.txt";
@@ -17,9 +22,11 @@ public class SendMessages {
         File file = new File(filename);
         int last_id = -1;
         if (!file.exists() || file.length() == 0) {
+            file.delete();
+            file.createNewFile();
             last_id = 0;
         } else {
-            Database db = new Database();
+            TextDatabase db = new TextDatabase("messages_test.txt","user_test.txt");
             List<ChatMessage> check = db.readMessages();
             for (int i = 0; i < check.size() - 1; i++) {
                 if (check.get(i).getId() >= last_id) {
